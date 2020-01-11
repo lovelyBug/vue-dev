@@ -48,8 +48,10 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 export function initState (vm: Component) {
   vm._watchers = []
   const opts = vm.$options
+  // 属性响应式
   if (opts.props) initProps(vm, opts.props)
   if (opts.methods) initMethods(vm, opts.methods)
+  // 数据响应式
   if (opts.data) {
     initData(vm)
   } else {
@@ -123,6 +125,7 @@ function initData (vm: Component) {
     )
   }
   // proxy data on instance
+  // 代理这些数据到实例上面
   const keys = Object.keys(data)
   const props = vm.$options.props
   const methods = vm.$options.methods

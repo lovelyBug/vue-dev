@@ -13,8 +13,9 @@ const idToTemplate = cached(id => {
   const el = query(id)
   return el && el.innerHTML
 })
-
+// 保存原来的$mount
 const mount = Vue.prototype.$mount
+// 覆盖默认的$mount，需要做点什么，做编译
 Vue.prototype.$mount = function (
   el?: string | Element,
   hydrating?: boolean
@@ -31,6 +32,8 @@ Vue.prototype.$mount = function (
 
   const options = this.$options
   // resolve template/el and convert to render function
+
+  // 如果没有render选项，则去找template, 然后再去找el
   if (!options.render) {
     let template = options.template
     if (template) {
@@ -62,6 +65,7 @@ Vue.prototype.$mount = function (
         mark('compile')
       }
 
+      // 编译得到渲染函数
       const { render, staticRenderFns } = compileToFunctions(template, {
         outputSourceRange: process.env.NODE_ENV !== 'production',
         shouldDecodeNewlines,
@@ -79,6 +83,7 @@ Vue.prototype.$mount = function (
       }
     }
   }
+  // 执行挂载
   return mount.call(this, el, hydrating)
 }
 
