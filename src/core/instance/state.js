@@ -286,6 +286,7 @@ function initMethods (vm: Component, methods: Object) {
         )
       }
     }
+    // bind是Function.prototype.bind。polyfill
     vm[key] = typeof methods[key] !== 'function' ? noop : bind(methods[key], vm)
   }
 }

@@ -31,7 +31,7 @@ extend(Vue.options.directives, platformDirectives)
 extend(Vue.options.components, platformComponents)
 
 // install platform patch function
-// 把传入的向虚拟dom转换为真实dom，diff
+// 把传入的虚拟dom转换为真实dom，diff
 Vue.prototype.__patch__ = inBrowser ? patch : noop
 
 // public mount method

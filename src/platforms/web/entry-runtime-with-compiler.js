@@ -29,11 +29,11 @@ Vue.prototype.$mount = function (
     )
     return this
   }
-
+  // 获取选项
   const options = this.$options
   // resolve template/el and convert to render function
 
-  // 如果没有render选项，则去找template, 然后再去找el
+  // 如果没有render选项，则去找template, 然后再去找el，再将其转换为render函数
   if (!options.render) {
     let template = options.template
     if (template) {
