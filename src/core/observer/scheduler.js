@@ -171,6 +171,8 @@ export function queueWatcher (watcher: Watcher) {
     } else {
       // if already flushing, splice the watcher based on its id
       // if already past its id, it will be run next immediately.
+
+      // 如果正在刷新watcher队列，如果还未被执行，则替换watcher，如果已经被执行，插入到队列末尾
       let i = queue.length - 1
       while (i > index && queue[i].id > watcher.id) {
         i--
@@ -178,13 +180,16 @@ export function queueWatcher (watcher: Watcher) {
       queue.splice(i + 1, 0, watcher)
     }
     // queue the flush
+
+    // 刷新队列
     if (!waiting) {
       waiting = true
-
+      // 在开发环境下，直接执行刷新
       if (process.env.NODE_ENV !== 'production' && !config.async) {
         flushSchedulerQueue()
         return
       }
+      // 生产环境下，在下一个微任务刷新队列，然后在下一个宏任务刷新页面
       // 异步刷新队列
       nextTick(flushSchedulerQueue)
     }

@@ -127,6 +127,7 @@ export default class Watcher {
    */
   addDep (dep: Dep) {
     const id = dep.id
+    // 去重
     if (!this.newDepIds.has(id)) {
       this.newDepIds.add(id)
       this.newDeps.push(dep)
@@ -190,6 +191,7 @@ export default class Watcher {
         // set new value
         const oldValue = this.value
         this.value = value
+        // 如果是用户自定义的watch，对自定义的回调函数出错时提供警告信息
         if (this.user) {
           try {
             this.cb.call(this.vm, value, oldValue)
@@ -197,6 +199,7 @@ export default class Watcher {
             handleError(e, this.vm, `callback for watcher "${this.expression}"`)
           }
         } else {
+          // 不是用户自定义的，直接执行相关组件的updateComponent，更新组建
           this.cb.call(this.vm, value, oldValue)
         }
       }

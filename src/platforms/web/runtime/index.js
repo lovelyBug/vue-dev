@@ -47,6 +47,7 @@ Vue.prototype.$mount = function (
 
 // devtools global hook
 /* istanbul ignore next */
+// 在浏览器环境下，初始化devtools
 if (inBrowser) {
   setTimeout(() => {
     if (config.devtools) {

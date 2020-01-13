@@ -60,15 +60,19 @@ export function lifecycleMixin (Vue: Class<Component>) {
     const vm: Component = this
     const prevEl = vm.$el
     const prevVnode = vm._vnode
+
+    // 缓存
     const restoreActiveInstance = setActiveInstance(vm)
     vm._vnode = vnode
     // Vue.prototype.__patch__ is injected in entry points
     // based on the rendering backend used.
+
+    // 如果没有旧节点，直接渲染
     if (!prevVnode) {
       // initial render
       vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */)
     } else {
-      // updates
+      // 更新操作
       vm.$el = vm.__patch__(prevVnode, vnode)
     }
     restoreActiveInstance()
@@ -102,6 +106,7 @@ export function lifecycleMixin (Vue: Class<Component>) {
     callHook(vm, 'beforeDestroy')
     vm._isBeingDestroyed = true
     // remove self from parent
+    // 找到其父节点
     const parent = vm.$parent
     if (parent && !parent._isBeingDestroyed && !vm.$options.abstract) {
       remove(parent.$children, vm)
@@ -111,6 +116,7 @@ export function lifecycleMixin (Vue: Class<Component>) {
       vm._watcher.teardown()
     }
     let i = vm._watchers.length
+    // 将和其相关的watcher全部卸载
     while (i--) {
       vm._watchers[i].teardown()
     }
@@ -122,16 +128,20 @@ export function lifecycleMixin (Vue: Class<Component>) {
     // call the last hook...
     vm._isDestroyed = true
     // invoke destroy hooks on current rendered tree
+
+    // 更新dom
     vm.__patch__(vm._vnode, null)
     // fire destroyed hook
     callHook(vm, 'destroyed')
     // turn off all instance listeners.
+    // 卸载监听器
     vm.$off()
     // remove __vue__ reference
     if (vm.$el) {
       vm.$el.__vue__ = null
     }
     // release circular reference (#6759)
+    // 释放父级
     if (vm.$vnode) {
       vm.$vnode.parent = null
     }
@@ -195,6 +205,8 @@ export function mountComponent (
   // we set this to vm._watcher inside the watcher's constructor
   // since the watcher's initial patch may call $forceUpdate (e.g. inside child
   // component's mounted hook), which relies on vm._watcher being already defined
+
+  // 一个组件只有一个Watcher，更新时执行updateComponent()
   new Watcher(vm, updateComponent, noop, {
     before () {
       if (vm._isMounted && !vm._isDestroyed) {

@@ -114,6 +114,7 @@ function copyAugment (target: Object, src: Object, keys: Array<string>) {
  * or the existing observer if the value already has one.
  */
 export function observe (value: any, asRootData: ?boolean): Observer | void {
+  // 如果不是对象，或者不是VNode，直接返回，不进行观察
   if (!isObject(value) || value instanceof VNode) {
     return
   }
@@ -130,6 +131,7 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
   ) {
     ob = new Observer(value)
   }
+  // 如果该观察对象是根数据，并且已经被成功观察
   if (asRootData && ob) {
     ob.vmCount++
   }
@@ -148,20 +150,22 @@ export function defineReactive (
 ) {
   // 和key一一对应
   const dep = new Dep()
-
+  // 获取对象的描述符，例如：configurable: true,enumerable: true,get: /*the getter function*/,set: undefined
   const property = Object.getOwnPropertyDescriptor(obj, key)
   if (property && property.configurable === false) {
     return
   }
 
   // cater for pre-defined getter/setters
+  // 如果被观察的对象可配置，并且拥有get和set，直接获取
   const getter = property && property.get
   const setter = property && property.set
+  // 如果getter不存在，这样获取value
   if ((!getter || setter) && arguments.length === 2) {
     val = obj[key]
   }
 
-  // 属性拦截，只要是对象类型均会返回childOb
+  // 属性拦截，只要是对象类型均会返回childOb，意味着对象下子数据变动也会更新页面
   let childOb = !shallow && observe(val)
   Object.defineProperty(obj, key, {
     enumerable: true,
@@ -194,14 +198,17 @@ export function defineReactive (
         customSetter()
       }
       // #7981: for accessor properties without setter
+      // 如果没有setter，说明数据不可被更改，直接返回
       if (getter && !setter) return
+      // 设置新值
       if (setter) {
         setter.call(obj, newVal)
       } else {
         val = newVal
       }
-      // 如果新值是对象，也要做响应化
+      // 如果新值是对象，也要做响应化，接受社会主义教育
       childOb = !shallow && observe(newVal)
+      // 通知更新
       dep.notify()
     }
   })

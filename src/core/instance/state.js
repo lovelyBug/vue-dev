@@ -42,6 +42,7 @@ export function proxy (target: Object, sourceKey: string, key: string) {
   sharedPropertyDefinition.set = function proxySetter (val) {
     this[sourceKey][key] = val
   }
+  // 在target上面定义代理
   Object.defineProperty(target, key, sharedPropertyDefinition)
 }
 
@@ -55,9 +56,11 @@ export function initState (vm: Component) {
   if (opts.data) {
     initData(vm)
   } else {
+    // 如果没传入data选项，响应式一个空对象，作为该组件的跟数据
     observe(vm._data = {}, true /* asRootData */)
   }
   if (opts.computed) initComputed(vm, opts.computed)
+  // 如果存在watch选项，并且不是浏览器原生watch，初始化watch
   if (opts.watch && opts.watch !== nativeWatch) {
     initWatch(vm, opts.watch)
   }
@@ -113,9 +116,11 @@ function initProps (vm: Component, propsOptions: Object) {
 
 function initData (vm: Component) {
   let data = vm.$options.data
+  // 如果data是一个函数，执行该函数，获取其值
   data = vm._data = typeof data === 'function'
     ? getData(data, vm)
     : data || {}
+    // 如果最后获取到的data不是一个合法的Object，提示
   if (!isPlainObject(data)) {
     data = {}
     process.env.NODE_ENV !== 'production' && warn(
@@ -130,6 +135,7 @@ function initData (vm: Component) {
   const props = vm.$options.props
   const methods = vm.$options.methods
   let i = keys.length
+  // 不让data里的属性与methods和props里的属性同名
   while (i--) {
     const key = keys[i]
     if (process.env.NODE_ENV !== 'production') {
@@ -146,11 +152,14 @@ function initData (vm: Component) {
         `Use prop default value instead.`,
         vm
       )
+      // 如果不是预留的key，例如const var
     } else if (!isReserved(key)) {
+      // 代理
       proxy(vm, `_data`, key)
     }
   }
   // observe data
+  // 数据响应式，接受社会主义教育
   observe(data, true /* asRootData */)
 }
 
