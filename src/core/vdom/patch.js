@@ -141,6 +141,7 @@ export function createPatchFunction (backend) {
     }
 
     vnode.isRootInsert = !nested // for transition enter check
+    // 如果创建的是组件，走下面的流程
     if (createComponent(vnode, insertedVnodeQueue, parentElm, refElm)) {
       return
     }
@@ -207,10 +208,13 @@ export function createPatchFunction (backend) {
     }
   }
 
+  // 这里的createComponent是把前面的那个执行结果的vnode转换为真实dom
   function createComponent (vnode, insertedVnodeQueue, parentElm, refElm) {
+     // 获取管理钩子函数
     let i = vnode.data
     if (isDef(i)) {
       const isReactivated = isDef(vnode.componentInstance) && i.keepAlive
+      // 如果存在init钩子，则执行之创建实例并挂载
       if (isDef(i = i.hook) && isDef(i = i.init)) {
         i(vnode, false /* hydrating */)
       }
@@ -218,8 +222,12 @@ export function createPatchFunction (backend) {
       // it should've created a child instance and mounted it. the child
       // component also has set the placeholder vnode's elm.
       // in that case we can just return the element and be done.
+
+      // 如果组件实例存在
       if (isDef(vnode.componentInstance)) {
+        // 属性初始化
         initComponent(vnode, insertedVnodeQueue)
+        // dom插入
         insert(parentElm, vnode.elm, refElm)
         if (isTrue(isReactivated)) {
           reactivateComponent(vnode, insertedVnodeQueue, parentElm, refElm)
