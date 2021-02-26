@@ -105,7 +105,7 @@ export function lifecycleMixin (Vue: Class<Component>) {
     }
     callHook(vm, 'beforeDestroy')
     vm._isBeingDestroyed = true
-    // remove self from parent
+    // remove self from parent 
     // 找到其父节点
     const parent = vm.$parent
     if (parent && !parent._isBeingDestroyed && !vm.$options.abstract) {

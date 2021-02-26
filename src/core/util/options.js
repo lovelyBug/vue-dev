@@ -398,6 +398,7 @@ export function mergeOptions (
     child = child.options
   }
 
+  // 确保所有props、inject、directive选项语法均已标准化为基于对象的格式。
   normalizeProps(child, vm)
   normalizeInject(child, vm)
   normalizeDirectives(child)
@@ -419,9 +420,11 @@ export function mergeOptions (
 
   const options = {}
   let key
+  // 如果父组件和被合并的组件有同名属性，使用父组件属性
   for (key in parent) {
     mergeField(key)
   }
+  // 如果被合并的组件里有某一属性，而父组件里没有，直接合并
   for (key in child) {
     if (!hasOwn(parent, key)) {
       mergeField(key)
@@ -451,12 +454,14 @@ export function resolveAsset (
   }
   const assets = options[type]
   // check local registration variations first
+  // 首先检查本地注册变化
   if (hasOwn(assets, id)) return assets[id]
   const camelizedId = camelize(id)
   if (hasOwn(assets, camelizedId)) return assets[camelizedId]
   const PascalCaseId = capitalize(camelizedId)
   if (hasOwn(assets, PascalCaseId)) return assets[PascalCaseId]
   // fallback to prototype chain
+  // 退回原型链
   const res = assets[id] || assets[camelizedId] || assets[PascalCaseId]
   if (process.env.NODE_ENV !== 'production' && warnMissing && !res) {
     warn(

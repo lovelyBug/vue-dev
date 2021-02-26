@@ -5,24 +5,79 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
+  <style>
+    .red {
+      color: red;
+    }
+    .green {
+      color: green;
+    }
+  </style>
   <script src="../../dist/vue.js"></script>
 </head>
 <body>
   <div id="app">
-    <h1>虚拟dom</h1>
-    <p>{{foo}}</p>
+    <div>doubleCount{{ doubleCount }}</div>
+    <h1 :class="{red: isRed}" @click="change">虚拟dom</h1>
+    <p @click="hanfle(1)" v-if="first" class="red">{{foo}}</p>
+    <p @click="hanfle(2)" v-if="second" class="green">{{foo}}</p>
+    <input v-model="input">
+    <comp v-model="input"></comp>
   </div>
   <script>
+    Vue.component('comp', {
+      props: {
+        value: {
+          type: String,
+          default: ''
+        }
+      },
+      template: '<div>I am comp. {{ value }}</div>'
+    })
     new Vue({
       el: '#app',
       data: {
-        foo: 'foo'
+        foo: 'foo',
+        isRed: true,
+        first: true,
+        second: true,
+        input: '222',
+        count: 1
+      },
+      computed: {
+        doubleCount() {
+          return this.count * 2
+        }
+      },
+      watch: {
+        count(pre, cur) {
+          console.log(pre, cur)
+        }
+      },
+      beforeMount() {
+        console.log('be', this.$el)
       },
       mounted() {
-        setTimeout(() => {
-          this.foo = 'foooooo'
-        }, 1000)
-      }
+        // setTimeout(() => {
+        //   this.foo = 'foooooo'
+        // }, 1000)
+        console.log('el', this.$el)
+      },
+      methods: {
+        hanfle(index) {
+          console.log(index)
+          this.count++
+          if(index === 1) {
+            this.first = false
+          } else {
+            this.second = false
+          }
+        },
+        change() {
+          console.log(123)
+          this.foo = 'qwer'
+        }
+      },
     })
   </script>
 </body>

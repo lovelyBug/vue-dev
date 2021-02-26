@@ -60,6 +60,8 @@ export function _createElement (
     return createEmptyVNode()
   }
   // object syntax in v-bind
+  // v-bind中的对象语法
+  // :is
   if (isDef(data) && isDef(data.is)) {
     tag = data.is
   }

@@ -749,7 +749,7 @@ export function createPatchFunction (backend) {
       isInitialPatch = true
       createElm(vnode, insertedVnodeQueue)
     } else {
-      // 如果传入的是真是节点，则是初始化操作
+      // 如果传入的是真实节点，则是初始化操作
       const isRealElement = isDef(oldVnode.nodeType)
       if (!isRealElement && sameVnode(oldVnode, vnode)) {
         // patch existing root node
